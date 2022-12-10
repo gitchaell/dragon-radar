@@ -38,4 +38,12 @@ class Ball {
   getLeft({ longitude }) {
     return (longitude + 180) * (mapWidth / 360);
   }
+
+  show() {
+    this.element.style.opacity = 1;
+  }
+
+  hide() {
+    this.element.style.opacity = +this.element.matches(':hover');
+  }
 }

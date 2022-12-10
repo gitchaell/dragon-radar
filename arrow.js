@@ -10,5 +10,10 @@ class Arrow {
     this.element.addEventListener('click', () => {
       window.open(`https://maps.google.com/?q=${this.latitude},${this.longitude}`, '_blank');
     });
+    this.show();
+  }
+
+  show() {
+    this.element.style.opacity = 1;
   }
 }

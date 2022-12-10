@@ -37,6 +37,44 @@
       background: var(--plane-background);
     }
 
+    div.start {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background-color: rgba(0, 0, 0, 0.32);
+      cursor: pointer;
+    }
+
+    div.start::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 64px;
+      height: 64px;
+      background: rgb(255 255 255);
+      border-radius: 100%;
+    }
+
+    div.start::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 96px;
+      height: 96px;
+      background: rgb(255 255 255 / 32%);
+      border-radius: 100%;
+      animation: snap 1s infinite ease-in-out;
+    }
+
+    @keyframes snap {
+      50% {
+        width: 81px;
+        height: 81px;
+      }
+    }
+
     div.plane {
       position: absolute;
       width: 1000vw;
@@ -64,17 +102,6 @@
       cursor: pointer;
     }
 
-    div.arrow {
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      width: 20px;
-      height: 24px;
-      clip-path: polygon(50% 0%, 100% 100%, 50% 81%, 0 100%);
-      background: var(--arrow-background);
-      cursor: pointer;
-    }
-
     div.ball:hover::before {
       content: attr(data-coords);
       position: absolute;
@@ -92,10 +119,24 @@
       font-size: 12px;
       line-height: 12px;
     }
+
+    div.arrow {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 20px;
+      height: 24px;
+      opacity: 0;
+      clip-path: polygon(50% 0%, 100% 100%, 50% 81%, 0 100%);
+      background: var(--arrow-background);
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
+
+  <div class="start"></div>
 
   <div class="plane"></div>
 
@@ -120,31 +161,59 @@
 
   <script>
 
-    const blinkingAudio = new Audio('assets/audios/radar-blinking.mp3');
+    const button = document.querySelector('div.start');
     const pushAudio = new Audio('assets/audios/radar-push.mp3');
+    const blinkingAudio = new Audio('assets/audios/radar-blinking.mp3');
     let audioIntervalId = null;
     let audioTimeoutId = null;
 
-    let arrow = null;
-    let balls = {};
+    const objects = { arrow: null, balls: {} };
+    const domballs = document.querySelectorAll('div.ball');
 
-    document.addEventListener('DOMContentLoaded', function () {
+    const createBalls = () => {
+      domballs.forEach((ball, key) => objects.balls[key] = new Ball({ element: ball }));
+    }
+
+    const createArrow = ({ latitude, longitude }) => {
+      objects.arrow = new Arrow({
+        element: document.querySelector('div.arrow'),
+        latitude,
+        longitude
+      });
+    }
+
+    button.addEventListener('click', function () {
 
       Promise.all([
         navigator.permissions.query({ name: 'geolocation' }),
-      ]).then((result) => {
+      ]).then(result => {
 
-        if (result.some(result => result.state !== 'granted')) return;
-
-        document.querySelectorAll('div.ball')
-          .forEach((ball, key) => balls[key] = new Ball({ element: ball }));
+        if (result.some(({ state }) => state === 'denied')) return;
 
         navigator.geolocation.getCurrentPosition(({ coords }) => {
-          arrow = new Arrow({
-            element: document.querySelector('div.arrow'),
-            latitude: coords.latitude,
-            longitude: coords.longitude
-          });
+
+          button.style.display = 'none';
+
+          createBalls();
+          createArrow(coords);
+
+          pushAudio.play();
+
+          window.clearInterval(audioIntervalId);
+          window.clearTimeout(audioTimeoutId);
+
+          audioIntervalId = setInterval(() => {
+
+            domballs.forEach((_, key) => objects.balls[key].show());
+
+            // blinkingAudio.cloneNode().play();
+
+            audioTimeoutId = setTimeout(() => {
+              domballs.forEach((_, key) => objects.balls[key].hide());
+            }, 500);
+
+          }, 1000);
+
         }, console.error);
       });
     });
@@ -157,29 +226,7 @@
       mapWidth = screenWidth - ballDiameter;
       mapHeight = screenHeight - ballDiameter;
 
-      document.querySelectorAll('div.ball')
-        .forEach((ball, key) => balls[key] = new Ball({ element: ball }));
-
-    });
-
-    document.addEventListener('click', function () {
-
-      pushAudio.play();
-
-      clearInterval(audioIntervalId);
-      clearTimeout(audioTimeoutId);
-
-      audioIntervalId = setInterval(() => {
-
-        document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = 1);
-
-        // blinkingAudio.cloneNode().play();
-
-        audioTimeoutId = setTimeout(() => {
-          document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = +ball.matches(':hover'));
-        }, 500);
-
-      }, 1000);
+      createBalls();
     });
 
   </script>
