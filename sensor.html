@@ -21,16 +21,14 @@
     function print() {
       for (var i = 0; i < arguments.length; i++) {
         if (typeof arguments[i] == 'object') {
-          document.body.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
+          document.body.innerHTML = (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
         } else {
-          document.body.innerHTML += arguments[i] + '<br />';
+          document.body.innerHTML = arguments[i] + '<br />';
         }
       }
     };
 
     document.addEventListener('DOMContentLoaded', function () {
-
-      print({ a: 1, b: { b1: 2, b2: 3 } });
 
       // https://developer.mozilla.org/en-US/docs/Web/API/OrientationSensor
       const sensor = new AbsoluteOrientationSensor();
@@ -43,9 +41,8 @@
 
         if (results.some((result) => result.state !== 'granted')) return;
 
-
         sensor.addEventListener('reading', () => {
-          print(sensor);
+          print(sensor.quaternion);
           model.quaternion.fromArray(sensor.quaternion).inverse();
         });
         sensor.addEventListener('error', () => print('sensors not available'));

@@ -136,12 +136,10 @@
 
         if (result.some((result) => result.state !== 'granted')) return;
 
-        let arrow = null;
-
         document.querySelectorAll('div.ball').forEach(ball => new Ball({ element: ball }));
 
-        navigator.geolocation.watchPosition(({ coords }) => {
-          arrow = new Arrow({
+        navigator.geolocation.getCurrentPosition(({ coords }) => {
+          new Arrow({
             element: document.querySelector('div.arrow'),
             latitude: coords.latitude,
             longitude: coords.longitude
