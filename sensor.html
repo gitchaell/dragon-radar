@@ -44,7 +44,7 @@
         try {
 
           sensor.addEventListener('reading', () => {
-            const { x, y, z, w } = sensor.quaternion;
+            const [x, y, z, w] = sensor.quaternion;
             print(`
             <ul>
                 <li>x => ${x}</li>
