@@ -47,10 +47,10 @@
             const [x, y, z, w] = sensor.quaternion;
             print(`
             <ul>
-                <li>x => ${x}</li>
-                <li>y => ${y}</li>
-                <li>z => ${z}</li>
-                <li>w => ${w}</li>
+                <li>x => ${x * 100}</li>
+                <li>y => ${y * 100}</li>
+                <li>z => ${z * 100}</li>
+                <li>w => ${w * 100}</li>
               </ul>
               `);
             model.quaternion.fromArray(sensor.quaternion).inverse();
