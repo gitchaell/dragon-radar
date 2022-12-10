@@ -6,8 +6,8 @@ class Ball {
     this.longitudeId = `${this.id}.longitude`;
     this.latitude = this.getLatitude();
     this.longitude = this.getLongitude();
-    this.top = toAbsolutePosition({ latitude: this.latitude });
-    this.left = toAbsolutePosition({ longitude: this.longitude });
+    this.top = this.getTop({ latitude: this.latitude });
+    this.left = this.getLeft({ longitude: this.longitude });
     this.element.setAttribute('data-coords', `${this.latitude},${this.longitude}`);
     this.element.setAttribute('style', `top: ${this.top}px;left: ${this.left}px;`);
     this.element.addEventListener('click', () => {
@@ -29,5 +29,13 @@ class Ball {
     const longitudeGenerated = randomLongitude();
     localStorage.setItem(this.longitudeId, longitudeGenerated);
     return longitudeGenerated;
+  }
+
+  getTop({ latitude }) {
+    return (latitude + 180) * (mapHeight / 360);
+  }
+
+  getLeft({ longitude }) {
+    return (longitude + 180) * (mapWidth / 360);
   }
 }

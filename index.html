@@ -125,8 +125,10 @@
     let audioIntervalId = null;
     let audioTimeoutId = null;
 
-    document.addEventListener('DOMContentLoaded', function () {
+    let arrow = null;
+    let balls = {};
 
+    document.addEventListener('DOMContentLoaded', function () {
 
       Promise.all([
         navigator.permissions.query({ name: 'geolocation' }),
@@ -134,16 +136,30 @@
 
         if (result.some(result => result.state !== 'granted')) return;
 
-        document.querySelectorAll('div.ball').forEach(ball => new Ball({ element: ball }));
+        document.querySelectorAll('div.ball')
+          .forEach((ball, key) => balls[key] = new Ball({ element: ball }));
 
         navigator.geolocation.getCurrentPosition(({ coords }) => {
-          new Arrow({
+          arrow = new Arrow({
             element: document.querySelector('div.arrow'),
             latitude: coords.latitude,
             longitude: coords.longitude
           });
         }, console.error);
       });
+    });
+
+    window.addEventListener('resize', function () {
+
+      screenWidth = screen.width;
+      screenHeight = screen.height;
+      ballDiameter = 16;
+      mapWidth = screenWidth - ballDiameter;
+      mapHeight = screenHeight - ballDiameter;
+
+      document.querySelectorAll('div.ball')
+        .forEach((ball, key) => balls[key] = new Ball({ element: ball }));
+
     });
 
     document.addEventListener('click', function () {
@@ -160,7 +176,7 @@
         // blinkingAudio.cloneNode().play();
 
         audioTimeoutId = setTimeout(() => {
-          document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = ball.matches(':hover') ? 1 : 0);
+          document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = +ball.matches(':hover'));
         }, 500);
 
       }, 1000);
