@@ -39,21 +39,21 @@
         navigator.permissions.query({ name: 'gyroscope' }),
       ]).then((results) => {
 
-        if (results.some((result) => result.state !== 'granted')) return;
+        if (results.some(result => result.state !== 'granted')) return;
 
         try {
 
           sensor.addEventListener('reading', () => {
-            model.quaternion.fromArray(sensor.quaternion).inverse();
             const { x, y, z, w } = sensor.quaternion;
             print(`
-              <ul>
+            <ul>
                 <li>x => ${x}</li>
                 <li>y => ${y}</li>
                 <li>z => ${z}</li>
                 <li>w => ${w}</li>
               </ul>
-            `);
+              `);
+            model.quaternion.fromArray(sensor.quaternion).inverse();
           });
           sensor.addEventListener('error', () => print('sensors not available'));
           sensor.start();

@@ -134,7 +134,7 @@
         navigator.permissions.query({ name: 'geolocation' }),
       ]).then((result) => {
 
-        if (result.some((result) => result.state !== 'granted')) return;
+        if (result.some(result => result.state !== 'granted')) return;
 
         document.querySelectorAll('div.ball').forEach(ball => new Ball({ element: ball }));
 
