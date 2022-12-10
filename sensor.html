@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensors</title>
+  <style>
+    body {
+      font-size: 8px;
+      font-family: monospace;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script>
+    function print() {
+      for (var i = 0; i < arguments.length; i++) {
+        if (typeof arguments[i] == 'object') {
+          document.body.innerHTML += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + '<br />';
+        } else {
+          document.body.innerHTML += arguments[i] + '<br />';
+        }
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+      print({ a: 1, b: { b1: 2, b2: 3 } });
+
+      // https://developer.mozilla.org/en-US/docs/Web/API/OrientationSensor
+      const sensor = new AbsoluteOrientationSensor();
+
+      Promise.all([
+        navigator.permissions.query({ name: 'accelerometer' }),
+        navigator.permissions.query({ name: 'magnetometer' }),
+        navigator.permissions.query({ name: 'gyroscope' }),
+      ]).then((results) => {
+
+        if (results.some((result) => result.state !== 'granted')) return;
+
+
+        sensor.addEventListener('reading', () => {
+          print(sensor);
+          model.quaternion.fromArray(sensor.quaternion).inverse();
+        });
+        sensor.addEventListener('error', () => print('sensors not available'));
+        sensor.start();
+
+      });
+    });
+  </script>
+</body>
+
+</html>

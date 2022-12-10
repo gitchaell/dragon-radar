@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dragon Radar</title>
+  <style>
+    :root {
+      --plane-color-light: #2ECE8C;
+      --plane-color: #009658;
+      --plane-color-dark: #09623D;
+      --plane-background: radial-gradient(circle, var(--plane-color-light) 0%, var(--plane-color) 72%, var(--plane-color-dark) 100%);
+      --plane-line-color: rgba(0, 0, 0, 0.24);
+      --plane-line-width: 1px;
+      --plane-line-horizontal: linear-gradient(var(--plane-line-color) var(--plane-line-width), transparent var(--plane-line-width));
+      --plane-line-vertical: linear-gradient(90deg, var(--plane-line-color) var(--plane-line-width), transparent var(--plane-line-width));
+
+      --ball-color: #EFE969;
+
+      --arrow-color: #E4282A;
+      --arrow-color-light: #e55c5d;
+      --arrow-background: radial-gradient(50% 50% at 50% 50%, var(--arrow-color-light) 0%, var(--arrow-color) 100%)
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background: var(--plane-background);
+    }
+
+    div.plane {
+      position: absolute;
+      width: 1000vw;
+      height: 1000vh;
+      left: -500vw;
+      top: -500vh;
+      background-image: var(--plane-line-horizontal), var(--plane-line-vertical);
+      background-size: 20px 20px;
+    }
+
+    div.camera {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    div.ball {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 100%;
+      background-color: var(--ball-color);
+      box-shadow: 0 0 12px 4px var(--ball-color);
+      opacity: 0;
+      transition: opacity 500ms;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    div.arrow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 24px;
+      clip-path: polygon(50% 0%, 100% 100%, 50% 81%, 0 100%);
+      background: var(--arrow-background);
+      cursor: pointer;
+    }
+
+    div.ball:hover::before {
+      content: attr(data-coords);
+      position: absolute;
+      bottom: 150%;
+      left: 50%;
+      margin-bottom: 5px;
+      margin-left: -80px;
+      padding: 6px 12px;
+      border-radius: 32px;
+      background-color: rgba(0, 0, 0, 0.24);
+      color: rgba(255, 255, 255, 0.64);
+      font-family: system-ui;
+      font-weight: 500;
+      text-align: center;
+      font-size: 12px;
+      line-height: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="plane"></div>
+
+  <div class="camera">
+
+    <div class="ball" data-stars="1" data-coords=""></div>
+    <div class="ball" data-stars="2" data-coords=""></div>
+    <div class="ball" data-stars="3" data-coords=""></div>
+    <div class="ball" data-stars="4" data-coords=""></div>
+    <div class="ball" data-stars="5" data-coords=""></div>
+    <div class="ball" data-stars="6" data-coords=""></div>
+    <div class="ball" data-stars="7" data-coords=""></div>
+
+  </div>
+
+  <div class="arrow" data-coords=""></div>
+
+
+  <script src="utils.js"></script>
+  <script src="ball.js"></script>
+  <script src="arrow.js"></script>
+
+  <script>
+
+    const blinkingAudio = new Audio('assets/audios/radar-blinking.mp3');
+    const pushAudio = new Audio('assets/audios/radar-push.mp3');
+    let audioIntervalId = null;
+    let audioTimeoutId = null;
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+      Promise.all([
+        navigator.permissions.query({ name: 'geolocation' }),
+      ]).then((result) => {
+
+        if (result.some((result) => result.state !== 'granted')) return;
+
+        let arrow = null;
+
+        document.querySelectorAll('div.ball').forEach(ball => new Ball({ element: ball }));
+
+        navigator.geolocation.watchPosition(({ coords }) => {
+          arrow = new Arrow({
+            element: document.querySelector('div.arrow'),
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          });
+        }, console.error);
+      });
+    });
+
+    document.addEventListener('click', function () {
+
+      pushAudio.play();
+
+      clearInterval(audioIntervalId);
+      clearTimeout(audioTimeoutId);
+
+      audioIntervalId = setInterval(() => {
+
+        document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = 1);
+
+        blinkingAudio.cloneNode().play();
+
+        audioTimeoutId = setTimeout(() => {
+          document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = ball.matches(':hover') ? 1 : 0);
+        }, 500);
+
+      }, 1000);
+    });
+
+  </script>
+
+</body>
+
+</html>
