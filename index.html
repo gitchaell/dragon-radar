@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
   <title>Dragon Radar</title>
   <style>
     :root {
@@ -49,8 +49,7 @@
 
     div.camera {
       position: absolute;
-      width: 100vw;
-      height: 100vh;
+      inset: 0;
     }
 
     div.ball {
@@ -62,14 +61,13 @@
       box-shadow: 0 0 12px 4px var(--ball-color);
       opacity: 0;
       transition: opacity 500ms;
-      transform-style: preserve-3d;
       cursor: pointer;
     }
 
     div.arrow {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      inset: 0;
+      margin: auto;
       width: 20px;
       height: 24px;
       clip-path: polygon(50% 0%, 100% 100%, 50% 81%, 0 100%);
@@ -159,7 +157,7 @@
 
         document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = 1);
 
-        blinkingAudio.cloneNode().play();
+        // blinkingAudio.cloneNode().play();
 
         audioTimeoutId = setTimeout(() => {
           document.querySelectorAll('div.ball').forEach(ball => ball.style.opacity = ball.matches(':hover') ? 1 : 0);

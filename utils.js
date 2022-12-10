@@ -12,8 +12,8 @@ function randomLongitude() {
   return random({ minNumber: -180, maxNumber: 180, decimalPlaces: 6 });
 }
 
-const screenWidth = screen.width | window.innerWidth | document.documentElement.clientWidth;
-const screenHeight = screen.height | window.innerHeight | document.documentElement.clientHeight;
+const screenWidth = screen.width; // window.innerWidth  document.documentElement.clientWidth;
+const screenHeight = screen.height; // window.innerHeight document.documentElement.clientHeight;
 const ballDiameter = 16;
 const mapWidth = screenWidth - ballDiameter;
 const mapHeight = screenHeight - ballDiameter;
@@ -25,5 +25,5 @@ function toAbsolutePosition({ longitude, latitude }) {
     return (longitude + 180) * (mapWidth / 360);
 
   if (latitude)
-    return (latitude + 180) * (mapHeight / 360);s
+    return (latitude + 180) * (mapHeight / 360);
 }
