@@ -41,20 +41,26 @@
 
         if (results.some((result) => result.state !== 'granted')) return;
 
-        sensor.addEventListener('reading', () => {
-          model.quaternion.fromArray(sensor.quaternion).inverse();
-          const { x, y, z, w } = sensor.quaternion;
-          print(`
-            <ul>
-              <li>X => ${x}</li>
-              <li>Y => ${y}</li>
-              <li>Z => ${z}</li>
-              <li>W => ${w}</li>
-            </ul>
-          `);
-        });
-        sensor.addEventListener('error', () => print('sensors not available'));
-        sensor.start();
+        try {
+
+          sensor.addEventListener('reading', () => {
+            model.quaternion.fromArray(sensor.quaternion).inverse();
+            const { x, y, z, w } = sensor.quaternion;
+            print(`
+              <ul>
+                <li>x => ${x}</li>
+                <li>y => ${y}</li>
+                <li>z => ${z}</li>
+                <li>w => ${w}</li>
+              </ul>
+            `);
+          });
+          sensor.addEventListener('error', () => print('sensors not available'));
+          sensor.start();
+
+        } catch (error) {
+          print(error);
+        }
 
       });
     });
