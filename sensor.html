@@ -17,8 +17,8 @@
 </head>
 
 <body>
-
   <script>
+
     function print() {
       for (var i = 0; i < arguments.length; i++) {
         if (typeof arguments[i] == 'object') {
@@ -27,34 +27,58 @@
           document.body.innerHTML = arguments[i] + '<br />';
         }
       }
-    };
+    }
+
+    function eulerFromQuaternion({ x, y, z, w }) {
+
+      let degree = 180 / Math.PI;
+      let roll = Math.atan2(2 * (w * x + y * z), w * w - x * x - y * y + z * z);
+      let pitch = Math.asin(2 * (w * y - x * z));
+      let yaw = Math.atan2(2 * (w * z + x * y), w * w + x * x - y * y - z * z);
+
+      if (pitch === + Math.PI / 2) {
+        roll = 0;
+        yaw = 2 * Math.atan2(x, w);
+      }
+
+      if (pitch === - Math.PI / 2) {
+        roll = 0;
+        yaw = -2 * Math.atan2(x, w);
+      }
+
+      return {
+        alpha: (yaw * degree).toFixed(2),
+        beta: (roll * degree).toFixed(2),
+        gamma: (pitch * degree).toFixed(2),
+      };
+    }
 
     document.addEventListener('DOMContentLoaded', function () {
 
       // https://developer.mozilla.org/en-US/docs/Web/API/OrientationSensor
-      const sensor = new AbsoluteOrientationSensor();
+      const sensor = new AbsoluteOrientationSensor({ frequency: 60, referenceFrame: 'device' });
 
       Promise.all([
         navigator.permissions.query({ name: 'accelerometer' }),
         navigator.permissions.query({ name: 'magnetometer' }),
         navigator.permissions.query({ name: 'gyroscope' }),
-      ]).then((results) => {
+      ]).then(results => {
 
-        if (results.some(result => result.state !== 'granted')) return;
+        if (results.some(({ state }) => state === 'denied')) return;
 
         try {
 
           sensor.addEventListener('reading', () => {
+
             const [x, y, z, w] = sensor.quaternion;
-            print(`
-            <ul>
-                <li>x => ${x * 100}</li>
-                <li>y => ${y * 100}</li>
-                <li>z => ${z * 100}</li>
-                <li>w => ${w * 100}</li>
-              </ul>
-              `);
-            model.quaternion.fromArray(sensor.quaternion).inverse();
+
+            const euler = eulerFromQuaternion({ x, y, z, w });
+
+            print(`<ul>
+                <li>alpha => ${euler.alpha}</li>
+                <li>beta => ${euler.beta}</li>
+                <li>gamma => ${euler.gamma}</li>
+              </ul>`);
           });
           sensor.addEventListener('error', () => print('sensors not available'));
           sensor.start();

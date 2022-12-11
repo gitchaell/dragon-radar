@@ -77,12 +77,14 @@
 
     div.plane {
       position: absolute;
-      width: 1000vw;
-      height: 1000vh;
-      left: -500vw;
-      top: -500vh;
+      width: 2000px;
+      height: 2000px;
+      top: calc((1000px - 50vh) * -1);
+      left: calc((1000px - 50vw) * -1);
       background-image: var(--plane-line-horizontal), var(--plane-line-vertical);
       background-size: 20px 20px;
+      border-radius: 100%;
+      transform-origin: 1000px 1000px;
     }
 
     div.camera {
@@ -162,6 +164,8 @@
   <script>
 
     const button = document.querySelector('div.start');
+    const plane = document.querySelector('div.plane');
+    const camera = document.querySelector('div.camera');
     const pushAudio = new Audio('assets/audios/radar-push.mp3');
     const blinkingAudio = new Audio('assets/audios/radar-blinking.mp3');
     let audioIntervalId = null;
@@ -185,48 +189,64 @@
     button.addEventListener('click', function () {
 
       Promise.all([
+        navigator.permissions.query({ name: 'accelerometer' }),
+        navigator.permissions.query({ name: 'magnetometer' }),
+        navigator.permissions.query({ name: 'gyroscope' }),
         navigator.permissions.query({ name: 'geolocation' }),
-      ]).then(result => {
+      ]).then(results => {
 
-        if (result.some(({ state }) => state === 'denied')) return;
+        if (results.some(({ state }) => state === 'denied')) return;
+
+        button.style.display = 'none';
 
         navigator.geolocation.getCurrentPosition(({ coords }) => {
-
-          button.style.display = 'none';
-
           createBalls();
           createArrow(coords);
-
-          pushAudio.play();
-
-          window.clearInterval(audioIntervalId);
-          window.clearTimeout(audioTimeoutId);
-
-          audioIntervalId = setInterval(() => {
-
-            domballs.forEach((_, key) => objects.balls[key].show());
-
-            // blinkingAudio.cloneNode().play();
-
-            audioTimeoutId = setTimeout(() => {
-              domballs.forEach((_, key) => objects.balls[key].hide());
-            }, 500);
-
-          }, 1000);
-
         }, console.error);
+
+        pushAudio.play();
+
+        window.clearInterval(audioIntervalId);
+        window.clearTimeout(audioTimeoutId);
+
+        audioIntervalId = window.setInterval(() => {
+
+          domballs.forEach((_, key) => objects.balls[key].show());
+
+          // blinkingAudio.cloneNode().play();
+
+          audioTimeoutId = window.setTimeout(() => {
+            domballs.forEach((_, key) => objects.balls[key].hide());
+          }, 500);
+
+        }, 1000);
+
+        window.addEventListener('resize', function () {
+
+          screenWidth = screen.width;
+          screenHeight = screen.height;
+          ballDiameter = 16;
+          mapWidth = screenWidth - ballDiameter;
+          mapHeight = screenHeight - ballDiameter;
+
+          createBalls();
+        });
+
+        const sensor = new AbsoluteOrientationSensor({ frequency: 60, referenceFrame: 'device' });
+
+        sensor.addEventListener('reading', () => {
+
+          const [x, y, z, w] = sensor.quaternion;
+
+          const { alpha } = eulerFromQuaternion({ x, y, z, w });
+
+          plane.style.transform = `rotateZ(${alpha}deg)`;
+          camera.style.transform = `rotateZ(${alpha}deg)`;
+        });
+        sensor.addEventListener('error', console.error);
+        sensor.start();
+
       });
-    });
-
-    window.addEventListener('resize', function () {
-
-      screenWidth = screen.width;
-      screenHeight = screen.height;
-      ballDiameter = 16;
-      mapWidth = screenWidth - ballDiameter;
-      mapHeight = screenHeight - ballDiameter;
-
-      createBalls();
     });
 
   </script>
