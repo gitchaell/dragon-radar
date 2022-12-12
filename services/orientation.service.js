@@ -23,9 +23,9 @@ class OrientationService {
     }
 
     return {
-      alpha: (yaw * degree).toFixed(2),
-      beta: (roll * degree).toFixed(2),
-      gamma: (pitch * degree).toFixed(2),
+      alpha: (yaw * degree).toFixed(0),
+      beta: (roll * degree).toFixed(0),
+      gamma: (pitch * degree).toFixed(0),
     };
   }
 
