@@ -10,13 +10,13 @@
   <title>Dragon Radar</title>
   <style>
     :root {
-      --plane-color: #009658;
-      --plane-line-color: rgba(0, 0, 0, 0.2);
-      --plane-line-width: 1px;
-      --plane-line-horizontal: linear-gradient(var(--plane-line-color) var(--plane-line-width), transparent var(--plane-line-width));
-      --plane-line-vertical: linear-gradient(90deg, var(--plane-line-color) var(--plane-line-width), transparent var(--plane-line-width));
+      --plane-color: rgba(0, 150, 87, 0.96);
       --ball-color: rgba(239, 232, 105, 0.96);
       --arrow-color: rgba(228, 40, 43, 0.96);
+      --plane-grid-color: rgba(0, 0, 0, 0.2);
+      --plane-grid-width: 1px;
+      --plane-grid-horizontal: linear-gradient(var(--plane-grid-color) var(--plane-grid-width), transparent var(--plane-grid-width));
+      --plane-grid-vertical: linear-gradient(90deg, var(--plane-grid-color) var(--plane-grid-width), transparent var(--plane-grid-width));
     }
 
     * {
@@ -76,7 +76,7 @@
       height: 2000px;
       top: calc((1000px - 50vh) * -1);
       left: calc((1000px - 50vw) * -1);
-      background-image: var(--plane-line-horizontal), var(--plane-line-vertical);
+      background-image: var(--plane-grid-horizontal), var(--plane-grid-vertical);
       background-size: 16px 16px;
       border-radius: 100%;
       transform-origin: 1000px 1000px;
