@@ -11,12 +11,12 @@
   <style>
     :root {
       --plane-color: #009658;
-      --plane-line-color: rgba(0, 0, 0, 0.24);
+      --plane-line-color: rgba(0, 0, 0, 0.2);
       --plane-line-width: 1px;
       --plane-line-horizontal: linear-gradient(var(--plane-line-color) var(--plane-line-width), transparent var(--plane-line-width));
       --plane-line-vertical: linear-gradient(90deg, var(--plane-line-color) var(--plane-line-width), transparent var(--plane-line-width));
-      --ball-color: #EFE969;
-      --arrow-color: #E4282A;
+      --ball-color: rgba(239, 232, 105, 0.96);
+      --arrow-color: rgba(228, 40, 43, 0.96);
     }
 
     * {
@@ -47,7 +47,7 @@
       margin: auto;
       width: 64px;
       height: 64px;
-      background: rgba(255, 255, 255, 0.64);
+      background: rgba(255, 255, 255, 0.48);
       border-radius: 100%;
     }
 
@@ -77,9 +77,19 @@
       top: calc((1000px - 50vh) * -1);
       left: calc((1000px - 50vw) * -1);
       background-image: var(--plane-line-horizontal), var(--plane-line-vertical);
-      background-size: 20px 20px;
+      background-size: 16px 16px;
       border-radius: 100%;
       transform-origin: 1000px 1000px;
+    }
+
+    div.plane::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 100vw;
+      height: 100vh;
+      background: url(assets/images/worldmap.svg) center / contain no-repeat;
     }
 
     div.map {
