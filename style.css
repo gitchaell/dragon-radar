@@ -1,0 +1,131 @@
+:root {
+	--plane-color: rgba(0, 150, 87, 0.96);
+	--ball-color: rgba(239, 232, 105, 0.96);
+	--arrow-color: rgba(228, 40, 43, 0.96);
+	--plane-grid-color: rgba(0, 0, 0, 0.2);
+	--plane-grid-width: 1px;
+	--plane-grid-horizontal: linear-gradient(
+		var(--plane-grid-color) var(--plane-grid-width),
+		transparent var(--plane-grid-width)
+	);
+	--plane-grid-vertical: linear-gradient(
+		90deg,
+		var(--plane-grid-color) var(--plane-grid-width),
+		transparent var(--plane-grid-width)
+	);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	background-color: var(--plane-color);
+}
+
+div.button {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	background-color: rgba(0, 0, 0, 0.32);
+	cursor: pointer;
+}
+
+div.button::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	width: 64px;
+	height: 64px;
+	background-color: rgba(255, 255, 255, 0.48);
+	background-image: url(assets/images/capsule-corp.logo.svg);
+	background-position: center;
+	background-size: 56%;
+	background-repeat: no-repeat;
+	border-radius: 100%;
+}
+
+div.button::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	width: 96px;
+	height: 96px;
+	background: rgba(255, 255, 255, 0.32);
+	border-radius: 100%;
+	animation: growing 1s infinite ease-in-out;
+}
+
+@keyframes growing {
+	50% {
+		width: 81px;
+		height: 81px;
+	}
+}
+
+div.map {
+	width: 100vw;
+	height: 100vh;
+	overflow: visible;
+}
+
+div.plane {
+	position: absolute;
+	width: 2000px;
+	height: 2000px;
+	top: calc((1000px - 50vh) * -1);
+	left: calc((1000px - 50vw) * -1);
+	background-image: var(--plane-grid-horizontal), var(--plane-grid-vertical);
+	background-size: 16px 16px;
+	border-radius: 100%;
+	transform-origin: 1000px 1000px;
+}
+
+div.ball {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	border-radius: 100%;
+	background-color: var(--ball-color);
+	box-shadow: 0 0 12px 4px var(--ball-color);
+	opacity: 0;
+	transition: opacity 500ms;
+	cursor: pointer;
+}
+
+div.ball:hover::before {
+	content: attr(data-coords);
+	position: absolute;
+	bottom: 150%;
+	left: 50%;
+	margin-bottom: 5px;
+	margin-left: -80px;
+	padding: 6px 12px;
+	border-radius: 32px;
+	background-color: rgba(0, 0, 0, 0.24);
+	color: rgba(255, 255, 255, 0.64);
+	font-family: system-ui;
+	font-weight: 500;
+	text-align: center;
+	font-size: 12px;
+	line-height: 12px;
+}
+
+div.arrow {
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	width: 20px;
+	height: 24px;
+	opacity: 0;
+	clip-path: polygon(50% 0%, 100% 100%, 50% 81%, 0 100%);
+	background-color: var(--arrow-color);
+	cursor: pointer;
+}
