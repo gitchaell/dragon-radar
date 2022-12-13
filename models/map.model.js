@@ -5,11 +5,11 @@ class Map {
   }
 
   getWidth() {
-    return window.innerWidth | window.screen.width;
+    return document.body.clientWidth | window.screen.width;
   }
 
   getHeight() {
-    return window.innerHeight | window.screen.height;
+    return document.body.clientHeight | window.screen.height;
   }
 
   rotate(alpha) {

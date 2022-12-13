@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="shortcut icon" href="assets/images/favicon.svg" type="image/x-icon">
   <script src="https://unpkg.com/rxjs@7.5.7/dist/bundles/rxjs.umd.min.js"></script>
   <title>Dragon Radar</title>
@@ -25,10 +26,10 @@
 
     body {
       margin: 0;
+      position: fixed;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      position: relative;
       background-color: var(--plane-color);
     }
 
@@ -74,6 +75,12 @@
       }
     }
 
+    div.map {
+      width: 100vw;
+      height: 100vh;
+      overflow: visible;
+    }
+
     div.plane {
       position: absolute;
       width: 2000px;
@@ -84,11 +91,6 @@
       background-size: 16px 16px;
       border-radius: 100%;
       transform-origin: 1000px 1000px;
-    }
-
-    div.map {
-      position: absolute;
-      inset: 0;
     }
 
     div.ball {
@@ -139,10 +141,9 @@
 
   <div class="button"></div>
 
-  <div class="plane"></div>
 
   <div class="map">
-
+    <div class="plane"></div>
     <div class="ball" data-stars="1" data-coords=""></div>
     <div class="ball" data-stars="2" data-coords=""></div>
     <div class="ball" data-stars="3" data-coords=""></div>
@@ -150,8 +151,8 @@
     <div class="ball" data-stars="5" data-coords=""></div>
     <div class="ball" data-stars="6" data-coords=""></div>
     <div class="ball" data-stars="7" data-coords=""></div>
-
   </div>
+
 
   <div class="arrow" data-coords=""></div>
 
