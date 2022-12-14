@@ -1,23 +1,22 @@
-class Map {
+export default class Map {
 
   constructor () {
     this.node = document.querySelector('div.map');
+    this.dimension = this.getDimension();
   }
 
-  getWidth() {
-    return document.body.clientWidth | window.screen.width;
+  getDimension() {
+    return {
+      width: document.body.clientWidth,
+      height: document.body.clientHeight,
+    };
   }
 
-  getHeight() {
-    return document.body.clientHeight | window.screen.height;
+  rotate({ z }) {
+    this.node.style.transform = `rotateZ(${z}deg)`;
   }
 
-  rotate(alpha) {
-    this.node.style.transform = `rotateZ(${alpha}deg)`;
-  }
-
-  updateDimensions() {
-    this.width = this.getWidth();
-    this.height = this.getHeight();
+  resize() {
+    this.dimension = this.getDimension();
   }
 }

@@ -1,7 +1,14 @@
-class GeolocationService {
+import random from '../utils/random.js';
+
+export default class GeolocationService {
 
   constructor () {
     this.subscriptionId = null;
+    this.settings = {
+      enableHighAccuracy: true,
+      maximumAge: 30000,
+      timeout: 27000,
+    };
   }
 
   getRandomCoords() {
@@ -11,20 +18,12 @@ class GeolocationService {
     };
   }
 
-  getCoords() {
-    return new Promise((resolve, reject) =>
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => resolve({ latitude: coords.latitude, longitude: coords.longitude }), reject,
-        { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000, })
-    );
-  }
-
   openCoordsInfo({ latitude, longitude }) {
     window.open(`https://maps.google.com/?q=${latitude},${longitude}`, 'mozillaWindow', 'popup,width=320,height=640');
   }
 
   subscribe(callback) {
-    this.subscriptionId = navigator.geolocation.watchPosition(callback);
+    this.subscriptionId = navigator.geolocation.watchPosition(({ coords }) => callback(coords), console.error, this.settings);
   }
 
   unsubscribe() {

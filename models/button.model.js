@@ -1,4 +1,4 @@
-class Button {
+export default class Button {
 
   constructor () {
     this.node = document.querySelector('div.button');
@@ -7,11 +7,8 @@ class Button {
     };
   }
 
-  sound() {
+  click() {
     this.audio.gluid.play();
-  }
-
-  hide() {
     this.node.style.display = 'none';
   }
 }

@@ -1,12 +1,11 @@
-class OrientationService {
+export default class OrientationService {
 
   constructor () {
     this.sensor = new AbsoluteOrientationSensor({ frequency: 60, referenceFrame: 'device' });
   }
 
-  getAngles() {
+  quaternionToAngles([x, y, z, w]) {
 
-    const [x, y, z, w] = this.sensor.quaternion;
     const degree = 180 / Math.PI;
     const pitch = Math.asin(2 * (w * y - x * z));
     let roll = Math.atan2(2 * (w * x + y * z), w * w - x * x - y * y + z * z);
@@ -23,18 +22,16 @@ class OrientationService {
     }
 
     return {
-      alpha: (yaw * degree).toFixed(0),
       beta: (roll * degree).toFixed(0),
       gamma: (pitch * degree).toFixed(0),
+      alpha: (yaw * degree).toFixed(0),
     };
   }
 
   subscribe(callback) {
-
-    this.sensor.addEventListener('reading', () => {
-      callback(this.getAngles());
-    })
-
+    rxjs.fromEvent(this.sensor, 'reading').subscribe(() => {
+      callback(this.quaternionToAngles(this.sensor.quaternion))
+    });
     this.sensor.start();
   }
 }
