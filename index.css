@@ -74,6 +74,7 @@ div.map {
 	width: 100vw;
 	height: 100vh;
 	overflow: visible;
+	transition: transform 500ms ease;
 }
 
 div.plane {
@@ -128,4 +129,5 @@ div.arrow {
 	clip-path: polygon(50% 0%, 100% 100%, 50% 81%, 0 100%);
 	background-color: var(--arrow-color);
 	cursor: pointer;
+	transition: transform 500ms ease;
 }

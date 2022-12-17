@@ -29,9 +29,11 @@ export default class OrientationService {
   }
 
   subscribe(callback) {
-    rxjs.fromEvent(this.sensor, 'reading').subscribe(() => {
-      callback(this.quaternionToAngles(this.sensor.quaternion))
-    });
+    rxjs.fromEvent(this.sensor, 'reading')
+      .pipe(rxjs.auditTime(200))
+      .subscribe(() => {
+        callback(this.quaternionToAngles(this.sensor.quaternion))
+      });
     this.sensor.start();
   }
 }
